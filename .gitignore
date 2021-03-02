@@ -1,2 +1,4 @@
 **/node_modules
 07-RestServer/.env
+.vscode/
+**package-lock.json
