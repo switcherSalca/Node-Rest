@@ -1,4 +1,5 @@
 const { Router } = require('express');
+const { check } = require('express-validator');
 const {
     getUsers,
     postUsers,
@@ -7,12 +8,21 @@ const {
     deleteUsers,
 } = require('../controllers/users');
 
+const { fieldValidators } = require('../middlewares/field_validate')
+
 const router = Router();
 
 router.get('/', getUsers)
-router.post('/', postUsers)
-router.put('/:id', putUsers)
-router.patch('/', patchUsers)
-router.delete('/', deleteUsers)
+router.post('/', [
+    check('name', 'el nombre es obligatorio').not().isEmpty(),
+    check('password', 'es obligatorio y deve de tener 6 letras').isLength({ min: 6, }),
+    check('email', 'el correo no es valido').isEmail(),
+    check('role', 'no es un rol valido').isIn(['ADMIN_ROLE', 'USER_ROLE']),
+    fieldValidators
+
+], postUsers);
+router.put('/:id', putUsers);
+router.patch('/', patchUsers);
+router.delete('/', deleteUsers);
 
 module.exports = router;

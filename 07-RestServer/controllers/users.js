@@ -1,5 +1,10 @@
 const { request, response } = require('express')
 
+const bcrypt = require('bcryptjs');
+const User = require('../models/user');
+
+// const { use } = require('../routes/users');
+
 const getUsers = (req = require, res = response) => {
     // http://localhost:8080/api/users ---queryparms---> ?id=10&name=pablo
     const { id, name = 'no name', apik, page = 1, limit } = req.query
@@ -13,16 +18,29 @@ const getUsers = (req = require, res = response) => {
         limit
     })
 }
+const postUsers = async(req = request, res = response) => {
 
-const postUsers = (req = request, res = response) => {
-    const { name, age, limit, page } = req.body;
+
+
+    const { name, email, password, role } = req.body;
+    const user = new User({ name, email, password, role });
+    // if usermail exist
+    const emailExist = await User.findOne({ email });
+    if (emailExist) {
+        return res.status(400).json({
+            msg: 'el correo ya esta registrado'
+        });
+
+    }
+    // encripyt
+    const salt = bcrypt.genSaltSync();
+    user.password = bcrypt.hashSync(password, salt);
+    //save db
+
+    await user.save();
 
     res.json({
-        msg: 'post API - controller',
-        name,
-        age,
-        limit,
-        page
+        user
     })
 }
 
@@ -53,5 +71,4 @@ module.exports = {
     putUsers,
     patchUsers,
     deleteUsers,
-
 }
