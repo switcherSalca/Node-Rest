@@ -9,6 +9,7 @@ const dbConnection = async() => {
             useUnifiedTopology: true,
             useCreateIndex: true,
             useFindAndModify: true,
+
         });
 
         console.log('base de datos online'.green);
