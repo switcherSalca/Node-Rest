@@ -6,18 +6,22 @@ const User = require('../models/user');
 // const { use } = require('../routes/users');
 
 const getUsers = async(req = require, res = response) => {
-    // http://localhost:8080/api/users ---queryparms---> ?id=10&name=pablo
-    // const { id, name = 'no name', apik, page = 1, limit } = req.query
-    // const countUsers = await User.countDocuments();
-    // const { limit = 5, from = 0 } = req.query;
-    // res.status(200).json({
-    //     msg: 'get API - controller',
-    //     countUsers,
-    // });
+    // http://localhost:8080/api/users ---query---> ?id=10&name=pablo
+    const { limit = 5, from = 0 } = req.query;
+    const query = { estate: true };
+
+    const [total, users] = await Promise.all([
+        User.countDocuments(query),
+        User.find(query)
+        .skip(Number(from))
+        .limit(Number(limit)),
+    ]);
+
 
     res.json({
-        msg: 'hola a tods',
-    })
+        total,
+        users,
+    });
 }
 
 
@@ -55,9 +59,16 @@ const patchUsers = (req, res) => {
         msg: 'patch API'
     })
 }
-const deleteUsers = (req, res) => {
+const deleteUsers = async(req, res) => {
+
+    const { id } = req.params;
+    // const user = await User.findByIdAndDelete(id); not recomended maybe integrity data lost
+    const user = await User.findByIdAndUpdate(id, { estate: false });
+
+
     res.json({
-        msg: 'delete API'
+        id,
+        user,
     })
 }
 module.exports = {
