@@ -62,13 +62,13 @@ const patchUsers = (req, res) => {
 const deleteUsers = async(req, res) => {
 
     const { id } = req.params;
-    // const user = await User.findByIdAndDelete(id); not recomended maybe integrity data lost
+    // const user = await User.findByIdAndDelete(id); not recomended maybe affect integrity data lost
     const user = await User.findByIdAndUpdate(id, { estate: false });
-
+    const authUser = req.authUser;
 
     res.json({
-        id,
         user,
+        authUser
     })
 }
 module.exports = {

@@ -1,21 +1,15 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
-const {
-    getUsers,
-    postUsers,
-    putUsers,
-    patchUsers,
-    deleteUsers,
-} = require('../controllers/users');
+const { getUsers, postUsers, putUsers, patchUsers, deleteUsers } = require('../controllers/users');
 const { roleValidator, emailValidator, userIdValidator } = require('../helpers/db-validators');
-const { fieldValidators } = require('../middlewares/field_validate');
-const validateJWT = require('../middlewares/validate-jwt');
+const { fieldValidators, validateJWT, isAdmin, hasRole } = require('../middlewares')
+const { validate } = require('../models/user');
+const role = require('../models/role');
 
 const router = Router();
 
 router.get('/', getUsers);
 router.post('/', [
-    check('id', 'No es un ID válido').isMongoId().custom(userIdValidator),
     check('name', 'el nombre es obligatorio').not().isEmpty(),
     check('password', 'es obligatorio y deve de tener 6 letras').isLength({ min: 6, }),
     check('email', 'el correo no es valido').isEmail().custom(emailValidator),
@@ -32,8 +26,11 @@ router.put('/:id', [
 router.patch('/', patchUsers);
 router.delete('/:id', [
     validateJWT,
+    hasRole('ADMIN_ROLE', 'SELLS_ROLE', 'NOSE_ROLE'),
+    // isAdmin, //verifica que sea un ADMIN_ROLE
     check('id', 'No es un ID válido').isMongoId().custom(userIdValidator),
     fieldValidators
 ], deleteUsers);
+
 
 module.exports = router;
