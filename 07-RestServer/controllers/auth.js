@@ -14,12 +14,12 @@ const login = async(req, res = reponse) => {
         }
         // user is active
         if (!user.estate) {
-            return res.status(400).json({ msg: 'Usuario o contraseña no son correctos - borrado.' })
+            return res.status(400).json({ msg: 'Usuario o contraseña no son correctos - borrado.' });
         }
         // verify password
         const validPassword = bcryptjs.compareSync(password, user.password);
         if (!validPassword) {
-            return res.status(400).json({ msg: 'Usuario o contraseña no son correctos - password.' })
+            return res.status(400).json({ msg: 'Usuario o contraseña no son correctos - password.' });
         }
         // generate JWT
         const token = await generateJWT(user.id);
@@ -36,17 +36,15 @@ const login = async(req, res = reponse) => {
     }
 }
 
-
 const googleSignIn = async(req = request, res = response) => {
-    const id_token = req.body;
-    // console.log(googleUser);
+    const { id_token } = req.body;
     const googleUser = await googleVerify(id_token);
     try {
-        res.json({ msg: 'google todo ok' });
-
+        res.json({ msg: 'google todo ok', googleUser });
     } catch (error) {
-        res.status(400).json({ msg: 'Token de google no es valido' })
+        res.status(400).json({ msg: 'Token de Google no es valido' });
     }
 
 }
+
 module.exports = { login, googleSignIn }

@@ -23,9 +23,14 @@ const SchemaUser = Schema({
         type: String,
         required: [true, 'contraseña obligatorio'],
     },
+    img: {
+        type: String,
+        default: 'not image'
+    },
     role: {
         type: String,
         required: true,
+        default: 'USER_ROLE',
         enum: ['ADMIN_ROLE', 'USER_ROLE']
     },
     estate: {
