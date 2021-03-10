@@ -15,7 +15,7 @@ const router = Router();
 
 router.get('/', getUsers);
 router.post('/', [
-    check('id', 'No es un ID válido').isMongoId().custom(userIdValidator),
+    // check('id', 'No es un ID válido').isMongoId().custom(userIdValidator),
     check('name', 'el nombre es obligatorio').not().isEmpty(),
     check('password', 'es obligatorio y deve de tener 6 letras').isLength({ min: 6, }),
     check('email', 'el correo no es valido').isEmail().custom(emailValidator),
