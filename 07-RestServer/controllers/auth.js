@@ -38,9 +38,26 @@ const login = async(req, res = reponse) => {
 
 const googleSignIn = async(req = request, res = response) => {
     const { id_token } = req.body;
-    const googleUser = await googleVerify(id_token);
+    const { email, name, img } = await googleVerify(id_token);
+
+    let user = await User.findOne({ email });
+    if (!user) {
+        // create
+        const data = {
+            email,
+            name,
+            img,
+            password: ':P',
+            img,
+            google: true
+        };
+        user = new User(data);
+        await user.save();
+    }
+
+
     try {
-        res.json({ msg: 'google todo ok', googleUser });
+        res.json({ msg: 'google todo ok' });
     } catch (error) {
         res.status(400).json({ msg: 'Token de Google no es valido' });
     }
